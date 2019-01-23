@@ -33,7 +33,7 @@ def writer(list_bulder):
 driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
 driver.maximize_window()
 static_url = "https://internshala.com/internships/work-from-home-jobs/page-"
-driver.get("https://internshala.com/internships/work-from-home-jobs/page-1")
+driver.get("https://internshala.com/internships/work-from-home-jobs")
 yesterday = datetime.datetime.today() - datetime.timedelta(days = 1)
 today = datetime.datetime.today()
 time.sleep(2)
@@ -48,6 +48,7 @@ for i in driver.find_elements_by_css_selector("#internship_list_container .indiv
 	list_builder = []
 	link = i.find_element_by_css_selector(".button_container a").get_attribute("href")
 	flag = 0
+	date_obj = ""
 	for j in i.find_elements_by_css_selector(".individual_internship_details table tbody tr td"):
 		if flag == 0:
 			flag = flag + 1
@@ -60,11 +61,11 @@ for i in driver.find_elements_by_css_selector("#internship_list_container .indiv
 		flag = flag + 1
 		dur_stp_str.append(j.text)
 	list_builder = [title,company,dur_stp_str[0],dur_stp_str[1],dur_stp_str[2],link]
-	if date_obj == today:
+	if str(date_obj).split(" ")[0] == str(today).split(" ")[0]:
 		writer(list_builder)
 	
 counter = 2
-while(1):
+while(counter<=10):
 	driver.get(static_url+str(counter))
 	for i in driver.find_elements_by_css_selector("#internship_list_container .individual_internship"):
 		title = i.find_element_by_css_selector("h4").text
@@ -82,14 +83,16 @@ while(1):
 				date_str = dat_mon[0]+" 20"+dat_mon[1]
 				format_str = "%d %b %Y"
 				date_obj = datetime.datetime.strptime(date_str,format_str)
-				if(date_obj <= yesterday):
-					webbrowser.open('file://' + os.path.realpath("Sample.html"))
-					driver.close()
-					sys.exit()
 			flag = flag + 1
 			dur_stp_str.append(j.text)
 		list_builder = [title,company,dur_stp_str[0],dur_stp_str[1],dur_stp_str[2],link]
-		writer(list_builder)
+		if str(date_obj).split(" ")[0] == str(today).split(" ")[0]:
+			writer(list_builder)
 	counter += 1
 end = "</table>"
 file_obj.write(end)
+webbrowser.open('file://' + os.path.realpath("Sample.html"))
+driver.close()
+sys.exit()
+internshala.py
+Displaying internshala.py.
